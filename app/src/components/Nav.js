@@ -5,7 +5,7 @@ import { Box, Image } from "@chakra-ui/react";
 function Nav() {
   return (
     <Box
-      bg="teal.600"
+      bg="brand.100"
       display="flex"
       justifyContent={"space-between"}
       height={14}
