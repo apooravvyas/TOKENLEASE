@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/TOKENLEASE/static/css/main.073c9b0a.css",
-    "main.js": "/TOKENLEASE/static/js/main.b8b50de1.js",
+    "main.js": "/TOKENLEASE/static/js/main.9a9bf8b7.js",
     "static/js/787.c1112931.chunk.js": "/TOKENLEASE/static/js/787.c1112931.chunk.js",
     "index.html": "/TOKENLEASE/index.html",
     "main.073c9b0a.css.map": "/TOKENLEASE/static/css/main.073c9b0a.css.map",
-    "main.b8b50de1.js.map": "/TOKENLEASE/static/js/main.b8b50de1.js.map",
+    "main.9a9bf8b7.js.map": "/TOKENLEASE/static/js/main.9a9bf8b7.js.map",
     "787.c1112931.chunk.js.map": "/TOKENLEASE/static/js/787.c1112931.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.073c9b0a.css",
-    "static/js/main.b8b50de1.js"
+    "static/js/main.9a9bf8b7.js"
   ]
 }
