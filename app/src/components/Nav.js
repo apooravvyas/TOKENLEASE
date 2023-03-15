@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Box, Image } from "@chakra-ui/react";
+import { Box, Image, Avatar } from "@chakra-ui/react";
+import logo from "../imgs/TokenLease.png";
 
 function Nav() {
   return (
@@ -11,7 +12,12 @@ function Nav() {
       height={14}
       alignItems="center"
     >
-      <Image src=""></Image>
+      <Image
+        src={logo}
+        height={"100px"}
+        width={"120px"}
+        marginLeft={12}
+      ></Image>
       <Box
         display="flex"
         justifyContent={"space-evenly"}
@@ -26,6 +32,13 @@ function Nav() {
         </Link>
         <Link to={"/abput"}>
           <div>About</div>
+        </Link>
+        <Link to={"profile"}>
+          <Avatar
+            name="Dan Abrahmov"
+            src="https://bit.ly/dan-abramov"
+            size="xs"
+          />
         </Link>
       </Box>
     </Box>
