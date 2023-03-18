@@ -4,8 +4,7 @@ import { Box, Image, Avatar } from "@chakra-ui/react";
 import logo from "../imgs/TokenLease.png";
 import Jazzicon from "react-jazzicon";
 
-function Nav(isConnected) {
-  console.log(isConnected);
+function Nav({ isConnected, ensName, shortAddress }) {
   return (
     <Box
       bg="brand.100"
@@ -14,12 +13,14 @@ function Nav(isConnected) {
       height={14}
       alignItems="center"
     >
-      <Image
-        src={logo}
-        height={"100px"}
-        width={"120px"}
-        marginLeft={12}
-      ></Image>
+      <Link to={"/"}>
+        <Image
+          src={logo}
+          height={"100px"}
+          width={"120px"}
+          marginLeft={12}
+        ></Image>
+      </Link>
       <Box
         display="flex"
         justifyContent={"space-evenly"}
@@ -30,21 +31,16 @@ function Nav(isConnected) {
           <div>Lend</div>
         </Link>
         <Link to={"/lending"}>
-          <div>Lend</div>
+          <div>Borrow</div>
         </Link>
-        <Link to={"/abput"}>
+        <Link to={"/about"}>
           <div>About</div>
         </Link>
-        <Link to={"profile"}>
+        <Link to={"/profile"}>
           <Box display={"flex"} flexDir={"row"}>
-            <Jazzicon
-              diameter={25}
-              seed={Math.round(Math.random() * 10000000)}
-            />
+            <Jazzicon diameter={25} seed={Math.round(2)} />
             <Box paddingLeft={"5px"}>
-              {isConnected.isConnect
-                ? `${isConnected.ensName ?? isConnected.shortAddress}`
-                : ""}
+              {isConnected ? `${ensName ?? shortAddress}` : ""}
             </Box>
           </Box>
         </Link>

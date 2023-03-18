@@ -15,12 +15,11 @@ function Home() {
   return (
     <>
       <Nav
-        isConnect={isConnected}
+        isConnected={isConnected}
         ensName={ensName}
         shortAddress={shortAddress}
       />
       <Box
-        // bgGradient="linear-gradient(90deg, rgba(131,58,180,1) 0%, rgba(14,11,64,1) 50%, rgba(252,176,69,1) 100%)"
         bgGradient="linear-gradient(90deg, rgba(131,58,180,1) 0%, rgba(14,11,64,1) 50%, rgba(0,0,0,1) 100%)"
         height={window.innerHeight - 56}
         width="100%"
