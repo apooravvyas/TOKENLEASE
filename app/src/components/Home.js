@@ -1,12 +1,24 @@
 import { Box, Button, Image } from "@chakra-ui/react";
 import React from "react";
 import Nav from "./Nav";
+import { useAccount, useConnect, useEnsName } from "wagmi";
+import { InjectedConnector } from "wagmi/connectors/injected";
 
 function Home() {
-  const connect = () => {};
+  const { address, isConnected } = useAccount();
+  const { data: ensName } = useEnsName({ address });
+  const { connect } = useConnect({
+    connector: new InjectedConnector(),
+  });
+
+  const shortAddress = `${address?.slice(0, 5)}.....${address?.slice(-5)}`;
   return (
     <>
-      <Nav />
+      <Nav
+        isConnect={isConnected}
+        ensName={ensName}
+        shortAddress={shortAddress}
+      />
       <Box
         // bgGradient="linear-gradient(90deg, rgba(131,58,180,1) 0%, rgba(14,11,64,1) 50%, rgba(252,176,69,1) 100%)"
         bgGradient="linear-gradient(90deg, rgba(131,58,180,1) 0%, rgba(14,11,64,1) 50%, rgba(0,0,0,1) 100%)"
@@ -47,8 +59,11 @@ function Home() {
               bg: "radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%)",
               transform: "scale(0.9)",
             }}
+            onClick={() => connect()}
           >
-            Connect Wallet
+            {isConnected
+              ? `Connected to ${ensName ?? shortAddress}`
+              : "Connect Wallet"}
           </Button>
         </Box>
       </Box>

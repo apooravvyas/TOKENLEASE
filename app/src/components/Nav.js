@@ -2,8 +2,10 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Box, Image, Avatar } from "@chakra-ui/react";
 import logo from "../imgs/TokenLease.png";
+import Jazzicon from "react-jazzicon";
 
-function Nav() {
+function Nav(isConnected) {
+  console.log(isConnected);
   return (
     <Box
       bg="brand.100"
@@ -34,11 +36,17 @@ function Nav() {
           <div>About</div>
         </Link>
         <Link to={"profile"}>
-          <Avatar
-            name="Dan Abrahmov"
-            src="https://bit.ly/dan-abramov"
-            size="xs"
-          />
+          <Box display={"flex"} flexDir={"row"}>
+            <Jazzicon
+              diameter={25}
+              seed={Math.round(Math.random() * 10000000)}
+            />
+            <Box paddingLeft={"5px"}>
+              {isConnected.isConnect
+                ? `${isConnected.ensName ?? isConnected.shortAddress}`
+                : ""}
+            </Box>
+          </Box>
         </Link>
       </Box>
     </Box>
