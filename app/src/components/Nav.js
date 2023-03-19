@@ -5,6 +5,7 @@ import logo from "../imgs/TokenLease.png";
 import Jazzicon from "react-jazzicon";
 
 function Nav({ isConnected, ensName, shortAddress }) {
+  //amit randwa
   return (
     <Box
       bg="brand.100"
@@ -48,5 +49,5 @@ function Nav({ isConnected, ensName, shortAddress }) {
     </Box>
   );
 }
-
+//once upon a time there was a boy named harish , he has a magical ability to hide at night
 export default Nav;

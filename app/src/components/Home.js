@@ -27,8 +27,11 @@ function Home() {
         position={"relative"}
       >
         <Box position={"absolute"} top={"25%"} left={40}>
-          <Box color={"white"} fontWeight="extrabold" fontSize={"5xl"}>
-            Your Gateway to
+          <Box color={"white"} fontWeight="extrabold" fontSize={"xl"}>
+            <img
+              src="https://see.fontimg.com/api/renderfont4/dKK/eyJyIjoiZnMiLCJoIjo0OCwidyI6MTI1MCwiZnMiOjM4LCJmZ2MiOiIjRkZGRkZGIiwiYmdjIjoiI0ZGRkZGRiIsInQiOjF9/WW91ciBHYXRld2F5IHRv/nervous.png"
+              alt=""
+            />
           </Box>
 
           <Box
@@ -65,6 +68,13 @@ function Home() {
               : "Connect Wallet"}
           </Button>
         </Box>
+        <Box
+          position={"absolute"}
+          top={"25%"}
+          right={40}
+          width={"80"}
+          height={"60"}
+        ></Box>
       </Box>
     </>
   );
