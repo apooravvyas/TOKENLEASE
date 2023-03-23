@@ -2,11 +2,17 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Box, Image, Avatar } from "@chakra-ui/react";
 import logo from "../imgs/TokenLease.png";
+import { useAccount, useConnect, useEnsName } from "wagmi";
+import { InjectedConnector } from "wagmi/connectors/injected";
 
-function Nav({ isConnected, ensName, shortAddress }) {
+function Nav() {
   const [activeItem, setActiveItem] = useState("/");
   const location = useLocation();
 
+  const { address, isConnected } = useAccount();
+  const { connect } = useConnect({
+    connector: new InjectedConnector(),
+  });
   useEffect(() => {
     setActiveItem(location.pathname);
   }, [location]);
@@ -42,12 +48,24 @@ function Nav({ isConnected, ensName, shortAddress }) {
         <Link to={"/lending"}>
           <Box
             borderBottom={activeItem === "/lending" ? "2px solid white" : ""}
+            onClick={() => {
+              if (!isConnected) {
+                connect();
+              }
+            }}
           >
             Lend
           </Box>
         </Link>
         <Link to={"/borrow"}>
-          <Box borderBottom={activeItem === "/borrow" ? "2px solid white" : ""}>
+          <Box
+            borderBottom={activeItem === "/borrow" ? "2px solid white" : ""}
+            onClick={() => {
+              if (!isConnected) {
+                connect();
+              }
+            }}
+          >
             Borrow
           </Box>
         </Link>

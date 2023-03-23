@@ -24,11 +24,7 @@ function Home() {
   const shortAddress = `${address?.slice(0, 5)}.....${address?.slice(-5)}`;
   return (
     <>
-      <Nav
-        isConnected={isConnected}
-        ensName={ensName}
-        shortAddress={shortAddress}
-      />
+      <Nav />
       <Box
         bgGradient="linear-gradient(90deg, rgba(131,58,180,1) 0%, rgba(14,11,64,1) 50%, rgba(0,0,0,1) 100%)"
         height={window.innerHeight - 56}
@@ -79,7 +75,11 @@ function Home() {
               margin={"5rem 1rem"}
               cursor={"pointer"}
               color={"#221354"}
-              onClick={() => connect()}
+              onClick={() => {
+                if (!isConnected) {
+                  connect();
+                }
+              }}
             >
               Get a loan
             </Button>
@@ -96,7 +96,11 @@ function Home() {
               margin={"5rem 1rem"}
               cursor={"pointer"}
               color={"white"}
-              onClick={() => connect()}
+              onClick={() => {
+                if (!isConnected) {
+                  connect();
+                }
+              }}
             >
               Want to lend
             </Button>
