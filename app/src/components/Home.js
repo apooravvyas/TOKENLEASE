@@ -1,8 +1,18 @@
-import { Box, Button, Image } from "@chakra-ui/react";
-import React from "react";
+import {
+  Box,
+  Button,
+  Image,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+} from "@chakra-ui/react";
+import React, { useEffect } from "react";
 import Nav from "./Nav";
 import { useAccount, useConnect, useEnsName } from "wagmi";
 import { InjectedConnector } from "wagmi/connectors/injected";
+
+import { Link } from "react-router-dom";
 
 function Home() {
   const { address, isConnected } = useAccount();
@@ -26,6 +36,17 @@ function Home() {
         color={"white"}
         position={"relative"}
       >
+        {!window.ethereum ? (
+          <Alert status="error" color={"black"}>
+            <AlertIcon />
+            <AlertTitle>No metamask connection</AlertTitle>
+            <AlertDescription>
+              Your may not be able to interact with the app.
+            </AlertDescription>
+          </Alert>
+        ) : (
+          ""
+        )}
         <Box position={"absolute"} top={"25%"} left={40}>
           <Box color={"white"} fontWeight="extrabold" fontSize={"xl"}>
             <img
@@ -33,12 +54,12 @@ function Home() {
               alt=""
             />
           </Box>
-
           <Box
             className="lending"
             color={"white"}
             fontWeight="extrabold"
             fontSize={"5xl"}
+            fontFamily={"'Poppins', sans-serif"}
           >
             {" "}
             NFT Lending
@@ -46,27 +67,40 @@ function Home() {
           <Box marginTop={4} fontSize={"md"} fontWeight={"bold"}>
             NFT Loans | Financing | Refinancing
           </Box>
-          <Button
-            _hover={{
-              boxShadow: "rgba(var(--primary-color), 0.5) 0px 0px 20px 0px",
-            }}
-            bg={
-              "radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%)"
-            }
-            borderRadius={"50px"}
-            padding={"25px 32px"}
-            margin={"5rem 1rem"}
-            cursor={"pointer"}
-            _active={{
-              bg: "radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%)",
-              transform: "scale(0.9)",
-            }}
-            onClick={() => connect()}
-          >
-            {isConnected
-              ? `Connected to ${ensName ?? shortAddress}`
-              : "Connect Wallet"}
-          </Button>
+          <Link to={"/borrow"}>
+            <Button
+              _hover={{
+                boxShadow: "rgba(var(--primary-color), 0.5) 0px 0px 20px 0px",
+                background: "RGBA(255, 255, 255, 0.80)",
+              }}
+              bg={"white"}
+              borderRadius="0"
+              padding={"25px 32px"}
+              margin={"5rem 1rem"}
+              cursor={"pointer"}
+              color={"#221354"}
+              onClick={() => connect()}
+            >
+              Get a loan
+            </Button>
+          </Link>
+          <Link to={"/lending"}>
+            <Button
+              _hover={{
+                boxShadow: "rgba(var(--primary-color), 0.5) 0px 0px 20px 0px",
+                background: "#221354",
+              }}
+              bg={"none"}
+              borderRadius="0"
+              padding={"25px 32px"}
+              margin={"5rem 1rem"}
+              cursor={"pointer"}
+              color={"white"}
+              onClick={() => connect()}
+            >
+              Want to lend
+            </Button>
+          </Link>
         </Box>
         <Box
           position={"absolute"}

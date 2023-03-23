@@ -1,11 +1,16 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { Box, Image, Avatar } from "@chakra-ui/react";
 import logo from "../imgs/TokenLease.png";
-import Jazzicon from "react-jazzicon";
 
 function Nav({ isConnected, ensName, shortAddress }) {
-  //amit randwa
+  const [activeItem, setActiveItem] = useState("/");
+  const location = useLocation();
+
+  useEffect(() => {
+    setActiveItem(location.pathname);
+  }, [location]);
+
   return (
     <Box
       bg="brand.100"
@@ -13,6 +18,7 @@ function Nav({ isConnected, ensName, shortAddress }) {
       justifyContent={"space-between"}
       height={14}
       alignItems="center"
+      paddingRight={20}
     >
       <Link to={"/"}>
         <Image
@@ -28,21 +34,26 @@ function Nav({ isConnected, ensName, shortAddress }) {
         width="500px"
         color={"white"}
       >
-        <Link to={"/lending"}>
-          <div>Lend</div>
+        <Link to={"/"}>
+          <Box borderBottom={activeItem === "/" ? "2px solid white" : ""}>
+            Home
+          </Box>
         </Link>
         <Link to={"/lending"}>
-          <div>Borrow</div>
+          <Box
+            borderBottom={activeItem === "/lending" ? "2px solid white" : ""}
+          >
+            Lend
+          </Box>
+        </Link>
+        <Link to={"/borrow"}>
+          <Box borderBottom={activeItem === "/borrow" ? "2px solid white" : ""}>
+            Borrow
+          </Box>
         </Link>
         <Link to={"/about"}>
-          <div>About</div>
-        </Link>
-        <Link to={"/profile"}>
-          <Box display={"flex"} flexDir={"row"}>
-            <Jazzicon diameter={25} seed={Math.round(2)} />
-            <Box paddingLeft={"5px"}>
-              {isConnected ? `${ensName ?? shortAddress}` : ""}
-            </Box>
+          <Box borderBottom={activeItem === "/about" ? "2px solid white" : ""}>
+            About
           </Box>
         </Link>
       </Box>

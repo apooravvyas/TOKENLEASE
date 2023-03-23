@@ -7,6 +7,7 @@ import Profile from "./components/Profile";
 import { WagmiConfig, createClient, configureChains, mainnet } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
 import { useAccount, useConnect, useEnsName } from "wagmi";
+import Borrow from "./components/Borrow";
 
 function App() {
   const { chains, provider, webSocketProvider } = configureChains(
@@ -27,6 +28,7 @@ function App() {
           <Route path="/lending" element={<Lending />} />
           <Route path="/about" element={<About />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/borrow" element={<Borrow />} />
         </Routes>
       </WagmiConfig>
     </>
