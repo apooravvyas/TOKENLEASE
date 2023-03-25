@@ -1,3 +1,4 @@
+import { Box } from "@chakra-ui/react";
 import React from "react";
 import Nav from "./Nav";
 
@@ -5,7 +6,7 @@ function Borrow() {
   return (
     <div>
       <Nav />
-      saf
+      <Box>s</Box>
     </div>
   );
 }
