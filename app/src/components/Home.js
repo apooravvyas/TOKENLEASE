@@ -7,10 +7,11 @@ import {
   AlertTitle,
   AlertDescription,
 } from "@chakra-ui/react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Nav from "./Nav";
 import { useAccount, useConnect, useEnsName } from "wagmi";
 import { InjectedConnector } from "wagmi/connectors/injected";
+import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
 
 import { Link } from "react-router-dom";
 
@@ -21,7 +22,7 @@ function Home() {
     connector: new InjectedConnector(),
   });
 
-  const shortAddress = `${address?.slice(0, 5)}.....${address?.slice(-5)}`;
+  // const shortAddress = `${address?.slice(0, 5)}.....${address?.slice(-5)}`;
   return (
     <>
       <Nav />

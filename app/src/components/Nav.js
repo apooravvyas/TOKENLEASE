@@ -4,18 +4,19 @@ import { Box, Image, Avatar } from "@chakra-ui/react";
 import logo from "../imgs/TokenLease.png";
 import { useAccount, useConnect, useEnsName } from "wagmi";
 import { InjectedConnector } from "wagmi/connectors/injected";
+import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
 
 function Nav() {
   const [activeItem, setActiveItem] = useState("/");
   const location = useLocation();
+  useEffect(() => {
+    setActiveItem(location.pathname);
+  }, [location]);
 
   const { address, isConnected } = useAccount();
   const { connect } = useConnect({
     connector: new InjectedConnector(),
   });
-  useEffect(() => {
-    setActiveItem(location.pathname);
-  }, [location]);
 
   return (
     <Box
@@ -50,6 +51,7 @@ function Nav() {
             borderBottom={activeItem === "/lending" ? "2px solid white" : ""}
             onClick={() => {
               if (!isConnected) {
+                console.log("cone");
                 connect();
               }
             }}
