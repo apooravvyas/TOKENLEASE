@@ -51,7 +51,6 @@ function Nav() {
             borderBottom={activeItem === "/lending" ? "2px solid white" : ""}
             onClick={() => {
               if (!isConnected) {
-                console.log("cone");
                 connect();
               }
             }}

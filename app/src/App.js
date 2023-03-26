@@ -4,6 +4,7 @@ import About from "./components/About";
 import Home from "./components/Home";
 import Lending from "./components/Lending";
 import Profile from "./components/Profile";
+import Assest from "./components/Assest";
 import { WagmiConfig, createClient, configureChains, mainnet } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
 import { useAccount, useConnect, useEnsName } from "wagmi";
@@ -29,6 +30,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/borrow" element={<Borrow />} />
+          {/* <Route path="/asset/:id" element={<Assest />} /> */}
         </Routes>
       </WagmiConfig>
     </>
