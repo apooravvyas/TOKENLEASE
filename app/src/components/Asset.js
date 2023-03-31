@@ -5,7 +5,7 @@ import { alchemy } from "./Lending";
 import deploy from "./deploy";
 import Nav from "./Nav";
 
-function Assest() {
+function Asset() {
   const { id } = useParams();
   const [nfts, setNfts] = useState();
   const [url, setUrl] = useState();
@@ -122,4 +122,4 @@ function Assest() {
   );
 }
 
-export default Assest;
+export default Asset;

@@ -62,7 +62,7 @@ function Borrow() {
     <Box>
       <Nav />
       <Heading margin={"1px auto"} display={"flex"} justifyContent={"center"}>
-        Your Assests
+        Your Assets
       </Heading>
       {!url || !showNFT ? (
         <Box
