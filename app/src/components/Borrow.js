@@ -3,21 +3,24 @@ import {
   cookieStorageManager,
   Heading,
   SimpleGrid,
-  Skeleton,
-  SkeletonCircle,
-  SkeletonText,
-  Stack,
+  Spinner,
+  Image,
+  Text,
 } from "@chakra-ui/react";
-import { useAccount, useConnect, useEnsName } from "wagmi";
+import { useAccount, useConnect, useEnsName, useProvider } from "wagmi";
 import React, { useEffect, useState } from "react";
 import Nav from "./Nav";
 import { alchemy } from "./Lending";
 import { Link } from "react-router-dom";
+import { ethers, providers } from "ethers";
 
 function Borrow() {
+  const wagmiProvider = useProvider();
+
   const { address, isConnected } = useAccount();
   const [nfts, setNfts] = useState();
   const [url, setUrl] = useState();
+  const [showNFT, setShowNFT] = useState(false);
 
   useEffect(() => {
     const getNfts = async () => {
@@ -26,8 +29,9 @@ function Borrow() {
       );
       // console.log(_nfts);
       setNfts(_nfts);
-      console.log(nfts);
     };
+    setTimeout(changeShowNft, 25000);
+
     getNfts();
   }, [address]);
 
@@ -46,46 +50,77 @@ function Borrow() {
 
       setUrl(_url);
     };
+
     getUrl();
   }, [nfts]);
+
+  const changeShowNft = () => {
+    setShowNFT(true);
+  };
 
   return (
     <Box>
       <Nav />
-      <Heading margin={"1px auto"}>Your Assests:</Heading>
-      {!url ? (
-        <Stack>
-          {console.log("timeee")}
-          <Skeleton height="20px" />
-          <Skeleton height="20px" />
-          <Skeleton height="20px" />
-        </Stack>
+      <Heading margin={"1px auto"} display={"flex"} justifyContent={"center"}>
+        Your Assests
+      </Heading>
+      {!url || !showNFT ? (
+        <Box
+          display={"flex"}
+          alignItems={"center"}
+          flexDirection={"column"}
+          height={window.innerHeight - 224}
+          justifyContent={"center"}
+        >
+          <Spinner size="lg" thickness="2px" />
+          <Text fontSize={"2sm"}>Fetching your NFTs on Polygon Network</Text>
+        </Box>
       ) : (
-        <SimpleGrid columns={3} spacing={50} margin={12}>
-          {console.log(url)}
-
+        <SimpleGrid columns={3} spacing={50} marginX={28} marginY={12}>
+          {url.length == 0 ? (
+            <Box
+              fontSize={"2sm"}
+              display={"flex"}
+              justifyContent={"center"}
+              alignItems={"center"}
+              height={window.innerHeight - 224}
+              width={window.innerWidth - 210}
+              boxSizing="border-box"
+            >
+              <Text fontSize={"2sm"}>You don't own any NFTs on Polygon</Text>
+            </Box>
+          ) : (
+            ""
+          )}
           {url?.map((x, i) => {
             return (
-              <Box
-                key={i}
-                border={"2px solid black"}
-                // borderRadius={4}
-                // _active={{ transform: "scale(0.9)", transition: "all 0.1s" }}
-                _hover={{
-                  border: "4px solid transparent",
-                  borderImage:
-                    "linear-gradient(90deg, rgba(131,58,180,1) 0%, rgba(14,11,64,1) 50%, rgba(0,0,0,1) 100%) 1",
-                  animation: "rotate 3s linear infinite",
-                }}
-              >
-                <Link to={`/asset/${i}`} target="_blank">
-                  <img
+              <Link to={`/asset/${i}`} target="_blank">
+                <Box
+                  display={"flex"}
+                  justifyContent={"space-between"}
+                  flexDir={"column"}
+                  key={i}
+                  border={"2px solid black"}
+                  height={"330px"}
+                  // borderRadius={4}
+                  // _active={{ transform: "scale(0.9)", transition: "all 0.1s" }}
+                  _hover={{
+                    border: "4px solid transparent",
+                    borderImage:
+                      "linear-gradient(90deg, rgba(131,58,180,1) 0%, rgba(14,11,64,1) 50%, rgba(0,0,0,1) 100%) 1",
+                    animation: "rotate 3s linear infinite",
+                  }}
+                >
+                  <Image
                     src={x.media.length == 1 ? x?.media[0]?.gateway : "null"}
                     alt="No Media"
+                    maxH={"300px"}
                   />
-                  <Box>{x?.rawMetadata.name}</Box>
-                </Link>
-              </Box>
+                  <Box display={"flex"} justifyContent={"center"}>
+                    {x?.rawMetadata.name}
+                  </Box>
+                </Box>
+              </Link>
             );
           })}
         </SimpleGrid>
