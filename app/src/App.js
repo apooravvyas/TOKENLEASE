@@ -30,7 +30,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/borrow" element={<Borrow />} />
-          {/* <Route path="/asset/:id" element={<Assest />} /> */}
+          <Route path="/asset/:id" element={<Assest />} />
         </Routes>
       </WagmiConfig>
     </>

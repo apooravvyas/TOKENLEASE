@@ -9,7 +9,8 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import Nav from "./Nav";
-import { useAccount, useConnect, useEnsName } from "wagmi";
+import { useAccount, useConnect, useEnsName, useNetwork } from "wagmi";
+import { polygon, polygonMumbai } from "wagmi/chains";
 import { InjectedConnector } from "wagmi/connectors/injected";
 import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
 
