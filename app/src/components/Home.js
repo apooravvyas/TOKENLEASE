@@ -13,6 +13,7 @@ import { useAccount, useConnect, useEnsName, useNetwork } from "wagmi";
 import { polygon, polygonMumbai } from "wagmi/chains";
 import { InjectedConnector } from "wagmi/connectors/injected";
 import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
+import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 
 import { Link } from "react-router-dom";
 
@@ -20,7 +21,9 @@ function Home() {
   const { address, isConnected } = useAccount();
   const { data: ensName } = useEnsName({ address });
   const { connect } = useConnect({
-    connector: new InjectedConnector(),
+    connector: new MetaMaskConnector({
+      chains: [polygonMumbai, polygon],
+    }),
   });
 
   // const shortAddress = `${address?.slice(0, 5)}.....${address?.slice(-5)}`;

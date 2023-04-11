@@ -8,7 +8,7 @@ const { Network, Alchemy } = require("alchemy-sdk");
 
 const settings = {
   apiKey: "wGSDRVbkICs8ErAzz1YpFOoh0p-Gg2Ov", // Replace with your Alchemy API Key.
-  network: Network.MATIC_MAINNET, // Replace with your network.
+  network: Network.MATIC_MUMBAI, // Replace with your network.
 };
 
 export const alchemy = new Alchemy(settings);
@@ -20,9 +20,7 @@ function Lending() {
 
   useEffect(() => {
     const getNfts = async () => {
-      const _nfts = await alchemy.nft.getNftsForOwner(
-        "0xf1BD144885df4231A9B25276C0a1231c3d2cBFF4"
-      );
+      const _nfts = await alchemy.nft.getNftsForOwner(address);
       // console.log(_nfts);
       setNfts(_nfts);
     };

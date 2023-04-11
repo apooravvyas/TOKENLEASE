@@ -1,191 +1,124 @@
-// SPDX-License-Identifier: CC0-1.0
+// SPDX-License-Identifier: MIT
+
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "./IERC4907.sol";
-//import "./IERC721.sol";
-import "./IERC20.sol";
+//import "@openzeppelin/contracts/token/ERC721/IERC721.sol " as IERC721  ;
+import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
+contract NFTLoan is ERC721Holder {
+    using SafeMath for uint256;
+    address public owner;
+    uint256 public loanAmount;
+    uint256 public interestRate;
+    uint256 public loanDuration;
+    uint256 public loanStartDate;
+    address public borrower;
+    address public lender;
+    uint256 public tokenId;
+    ERC721Enumerable public instan;
+    IERC721 public nft;
 
-contract merge is ERC721, IERC4907 {
-    struct UserInfo 
-    {
-        address user;   // address of user role
-        uint64 expires; // unix timestamp, user expires
+    enum State {
+        Open,
+        Active,
+        Defaulted,
+        Completed
     }
-    // Struct to represent a loan
-     struct Loan {
-        uint256 id;
-        address borrower;
-        address lender;
-        uint256 nftId;
-        uint256 startTime;
-        uint256 endTime;
-        uint256 interestRate;
-        bool repaid;
-        bool exists;
-    }
-     
-    mapping(uint256 => Loan) public loans; // Mapping of loan ID to loan details
+    State public state;
 
-    mapping (uint256  => UserInfo) internal _users; //Who is the current user of the NFT
-
-    uint256 public loanIdCounter;  // Counter for loan IDs
-    address public nftAddress;  // Address of the ERC721 contract
-    address public tokenAddress;// Address of the ERC20 token contract
-
-     constructor(address _nftAddress, address _tokenAddress , string memory name_, string memory symbol_) ERC721(name_, symbol_)  {
-        nftAddress = _nftAddress;
-        tokenAddress = _tokenAddress;
-        loanIdCounter = 0;
+    constructor(
+        uint256 _loanAmount,
+        uint256 _loanDuration,
+        address _nft,
+        address _borrower,
+        uint256 _tokenId
+    ) {
+        tokenId = _tokenId;
+        owner = msg.sender;
+        borrower = _borrower;
+        approveTokenTransfer(address(this), tokenId); // Approve function (Pop number 1 )
+        loanAmount = _loanAmount;
+        loanDuration = _loanDuration;
+        nft = IERC721(_nft);
+        state = State.Open;
     }
 
-    //constructor(string memory name_, string memory symbol_) ERC721(name_, symbol_) {}
+    // We will call this function after the deploying the comtract and after approval function of ERC721 is called by the borrower.
+    function listNFT() public {
+        require(state == State.Open, "Loan is not open");
+        // instan.safeTransferFrom(borrower, address(this), instan.tokenOfOwnerByIndex(borrower, tokenId));
+        nft.safeTransferFrom(borrower, address(this), tokenId);
+        state = State.Active;
+        //loanStartDate = block.timestamp;
+    }
 
+    // Display the NFT of the borrower to all the lenders (A,B,C)
+    // Say suppose A's bid is accepted then call acceptOffer()
 
-    // Function to create a new loan
-    function createLoan(uint256 _nftId, uint256 _duration, uint256 _interestRate) public {
-        // Check that the NFT is owned by the borrower
-        require(IERC721(nftAddress).ownerOf(_nftId) == msg.sender, "NFT not owned by borrower");
+    function makeOffer() public payable {
+        require(state == State.Active, "Loan is not active");
+        require(msg.value == loanAmount, "Incorrect loan amount");
+        lender = msg.sender; // Bid by three - four people
+    }
 
-        // Check that the borrower has approved the contract to spend the NFT
-        require(IERC721(nftAddress).getApproved(_nftId) == address(this), "NFT not approved for spending");
-
-        // Transfer the NFT to the contract
-        IERC721(nftAddress).safeTransferFrom(msg.sender, address(this), _nftId);
-
-        // Transfer the token from the borrower to the contract
-        uint256 tokenAmount = _duration * _interestRate;
-        IERC20(tokenAddress).transferFrom(msg.sender, address(this), tokenAmount);
-
-        // Create the loan
-        loanIdCounter++;
-        loans[loanIdCounter] = Loan(
-            loanIdCounter,
-            msg.sender,
-            address(0),
-            _nftId,
-            block.timestamp,
-            block.timestamp + _duration,
-            _interestRate,
-            false,
-            true
+    //Lender calls the function and msg.value == loanAmount
+    function acceptOffer(uint256 _interestRate) public payable {
+        require(state == State.Active, "Loan is not active");
+        require(msg.sender == borrower, "Only borrower can accept the offer");
+        loanStartDate = block.timestamp; // Loan start date
+        interestRate = _interestRate; // InterestRate set
+        loanStartDate = block.timestamp;
+        require(
+            block.timestamp < loanStartDate + loanDuration,
+            "Loan has expired"
         );
+        (bool sent, ) = borrower.call{value: msg.value}(""); //Transfer from contract -> borrower
+        require(sent, "Failed to send Ether");
+        //nft.safeTransferFrom(address(this), lender, nft.tokenOfOwnerByIndex(address(this), 0));
+        state = State.Completed;
     }
 
-    // Function to lend on an existing loan
-    function lend(uint256 _loanId) public {
-        // Check that the loan exists and hasn't been repaid
-        require(loans[_loanId].exists, "Loan does not exist");
-        require(!loans[_loanId].repaid, "Loan has already been repaid");
-
-        // Check that the loan hasn't expired
-        require(block.timestamp < loans[_loanId].endTime, "Loan has expired");
-
-        // Check that the lender has enough tokens
-        uint256 interest = calculateInterest(_loanId);
-        require(IERC20(tokenAddress).balanceOf(msg.sender) >= interest, "Not enough tokens");
-
-        // Transfer the tokens from the lender to the contract
-        IERC20(tokenAddress).transferFrom(msg.sender, address(this), interest);
-
-        // Update the loan
-        loans[_loanId].lender = msg.sender;
+    function payLoan() public payable {
+        require(state == State.Active, "Loan is not active");
+        require(msg.sender == borrower, "Only borrower can pay the loan");
+        //LoanAmount + Calculated Interest pop up meta-mask
+        require(
+            msg.value == loanAmount + calculateInterest(),
+            "Incorrect amount paid"
+        );
+        //borrower - contract - lender
+        (bool sent, ) = lender.call{value: msg.value}(""); // Transfer from conract ->Lender
+        require(sent, "Failed to send Ether");
+        state = State.Completed;
     }
 
-    // Function to calculate the interest owed on a loan
-    function calculateInterest(uint256 _loanId) public view returns (uint256) {
-        uint256 elapsed = block.timestamp - loans[_loanId].startTime;
-        uint256 interest = elapsed * loans[_loanId].interestRate;
+    function defaultLoan() public {
+        require(state == State.Active, "Loan is not active");
+        require(
+            block.timestamp >= loanStartDate + loanDuration,
+            "Loan has not yet expired"
+        );
+        //nft.transferFrom(address(this), lender, nft.tokenOfOwnerByIndex(address(this), 0));  //Transfer function should be used
+        nft.safeTransferFrom(address(this), lender, tokenId);
+        state = State.Defaulted;
+    }
+
+    function calculateInterest() public view returns (uint256) {
+        uint256 timeElapsed = block.timestamp - loanStartDate;
+        uint256 interest = (loanAmount * interestRate * timeElapsed) / 365 days;
         return interest;
     }
 
-    // Function to repay a loan
-    function repay(uint256 _loanId) public {
-        //
-    // Check that the loan exists and hasn't been repaid
-    require(loans[_loanId].exists, "Loan does not exist");
-    require(!loans[_loanId].repaid, "Loan has already been repaid");
+    function withdraw() public {
+        require(msg.sender == owner, "Only owner can withdraw");
+        require(address(this).balance > 0, "Balance is 0");
+        payable(owner).transfer(address(this).balance);
+    }
 
-    // Check that the borrower is repaying the loan
-    require(msg.sender == loans[_loanId].borrower, "Only borrower can repay loan");
-
-    // Calculate the interest owed on the loan
-    uint256 interest = calculateInterest(_loanId);
-
-    // Transfer the NFT back to the borrower
-    IERC721(nftAddress).safeTransferFrom(address(this), msg.sender, loans[_loanId].nftId);
-
-    // Transfer the interest to the lender
-    IERC20(tokenAddress).transfer(loans[_loanId].lender, interest);
-
-    // Mark the loan as repaid
-    loans[_loanId].repaid = true;
+    function approveTokenTransfer(address _approved, uint256 _tokenId) public {
+        nft.approve(_approved, _tokenId);
+    }
 }
-    
-    
-    /// @notice set the user and expires of an NFT
-    /// @dev The zero address indicates there is no user
-    /// Throws if `tokenId` is not valid NFT
-    /// @param user  The new user of the NFT
-    /// @param expires  UNIX timestamp, The new user could use the NFT before expires
-    function setUser(uint256 tokenId, address user, uint64 expires) public override virtual{
-        require(_isApprovedOrOwner(msg.sender, tokenId), "ERC4907: transfer caller is not owner nor approved");
-        UserInfo storage info =  _users[tokenId];
-
-        // require(info.expires < block.timestamp, "Already rented to someone");
-
-        info.user = user;
-        info.expires = expires;
-        emit UpdateUser(tokenId, user, expires);
-    }
-    
-
-    /// @notice Get the user address of an NFT
-    /// @dev The zero address indicates that there is no user or the user is expired
-    /// @param tokenId The NFT to get the user address for
-    /// @return The user address for this NFT
-    function userOf(uint256 tokenId) public view override virtual returns(address){
-        if (uint256(_users[tokenId].expires) >=  block.timestamp) {
-            return  _users[tokenId].user;
-        } else {
-            return ownerOf(tokenId);
-        }
-    }
-
-    /// @notice Get the user expires of an NFT
-    /// @dev The zero value indicates that there is no user
-    /// @param tokenId The NFT to get the user expires for
-    /// @return The user expires for this NFT
-    function userExpires(uint256 tokenId) public view override virtual returns(uint256){
-        if (uint256(_users[tokenId].expires) >=  block.timestamp) {
-            return _users[tokenId].expires;
-        } else {
-            return 115792089237316195423570985008687907853269984665640564039457584007913129639935;
-        }
-    }
-
-    /// @dev See {IERC165-supportsInterface}.
-    function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
-        return interfaceId == type(IERC4907).interfaceId || super.supportsInterface(interfaceId);
-    }
-
-    function _beforeTokenTransfer(address from, address to, uint256 tokenId,uint256 batchSize) internal virtual override {
-        
-        //super._beforeTokenTransfer(from,to,tokenId);
-        super._beforeTokenTransfer(from,to,tokenId,batchSize);
-        if (from != to && _users[tokenId].user != address(0)) {
-            delete _users[tokenId];
-            emit UpdateUser(tokenId, address(0), 0);
-        }
-    }
-
-    function mint(uint256 tokenId) public {
-        // this is the mint function that you need to customize for yourself
-        _mint(msg.sender, tokenId);
-    }
-
-    function time() public view returns (uint256) {
-        return block.timestamp;
-    }
-} 
