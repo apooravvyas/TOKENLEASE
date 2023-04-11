@@ -21,12 +21,10 @@ function Borrow() {
   const [nfts, setNfts] = useState();
   const [url, setUrl] = useState();
   const [showNFT, setShowNFT] = useState(false);
-
+  // "0xf1BD144885df4231A9B25276C0a1231c3d2cBFF4"
   useEffect(() => {
     const getNfts = async () => {
-      const _nfts = await alchemy.nft.getNftsForOwner(
-        "0xf1BD144885df4231A9B25276C0a1231c3d2cBFF4"
-      );
+      const _nfts = await alchemy.nft.getNftsForOwner(address);
       // console.log(_nfts);
       setNfts(_nfts);
     };
